@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e1283fe5b3765354bbfd4dc4a9c81710
+guid: b0eb31883d415804fb835b5dcc51f80e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8032842824590805791
-    second: minecraft fundo 1_0
+      213: 5393782354512651374
+    second: jogo fundo_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,17 +96,30 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: minecraft fundo 1_0
+      name: jogo fundo_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 600
-        height: 342
+        width: 639
+        height: 360
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1e438b7c20c958090800000000000000
-      internalID: -8032842824590805791
+      spriteID: e642f7459709ada40800000000000000
+      internalID: 5393782354512651374
       vertices: []
       indices: 
       edges: []
@@ -135,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      minecraft fundo 1_0: -8032842824590805791
+      jogo fundo_0: 5393782354512651374
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
