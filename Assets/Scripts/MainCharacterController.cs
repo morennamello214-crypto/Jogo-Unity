@@ -1,61 +1,119 @@
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class MainCharacterController : MonoBehaviour
 {
-    public float moveSpeed = 5f;     // Horizontal movement speed
-    public float jumpForce = 10f;    // Jump strength
-    public Transform groundCheck;    // Empty GameObject at feet
+    // --- Variáveis de Movimento e Configuração ---
+    [Header("Movement Settings")]
+    public float walkSpeed = 5f;
+    public float runSpeed = 10f; 
+    public float jumpForce = 10f; 
+    
+    // Variável para a velocidade atual do Rigidbody
+    private float currentSpeed; 
+    
+    [Header("Ground Check")]
+    public Transform groundCheck; 
     public float groundCheckRadius = 0.2f;
-    public LayerMask groundLayer;
+    public LayerMask groundLayer; 
 
+    // --- Variáveis Visuais e Componentes ---
+    [Header("Visual Settings")]
+    public Transform visual; // O objeto filho que contém o Sprite/Animator
+    private Animator anim; // Componente Animator
+    
+    // --- Variáveis de Saúde e Status ---
+    [Header("Health Settings")]
+    public float maxHealth = 100f;
+    public float currentHealth;
+    
+    // Variáveis privadas
     private Rigidbody2D rb;
     private bool isGrounded;
 
-    public Transform visual;
-    private Animator anim;
+    [HideInInspector] public bool isVictorious = false;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        anim = visual.GetComponent<Animator>();
+
+        // 🛑 PEGA O ANIMATOR DO OBJETO VISUAL FILHO
+        if (visual != null)
+        {
+            anim = visual.GetComponent<Animator>();
+        }
+        else
+        {
+            Debug.LogError("ERRO: Você esqueceu de arrastar o objeto 'Visual' no Inspector!");
+        }
+
+        // Inicializa o estado
+        currentHealth = maxHealth;
+        currentSpeed = walkSpeed; // Define a velocidade inicial como caminhada
     }
 
-    void Update()
+    // Dentro da classe MainCharacterController.cs
+void Update()
+{
+    // ... (restante do código: Verificação do Chão, Input)
+
+    float moveInput = Input.GetAxisRaw("Horizontal");
+    bool isShiftPressed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+
+    // --- 1. Lógica de Corrida (Define PRIORIDADE e VELOCIDADE) ---
+    
+    // CORREÇÃO: A Corrida só deve ser ativada se houver movimento
+    bool currentlyRunning = isShiftPressed && Mathf.Abs(moveInput) > 0f && isGrounded;
+
+    if (currentlyRunning)
     {
-        // Check if touching the ground
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-        anim.SetBool("IsGrounded", isGrounded);
-
-        // Horizontal movement (A/D or Left/Right arrows)
-        float moveInput = Input.GetAxisRaw("Horizontal");
-        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
-
-        //Walking Animation
-        anim.SetBool("isRunning", Mathf.Abs(moveInput) > 0f && isGrounded);
-        if (moveInput > 0.01f)
+        currentSpeed = runSpeed;
+        
+        if (anim != null)
         {
-            visual.localScale = new Vector3(4, 4, 4);
+            // Ativa o parâmetro de Corrida
+            anim.SetBool("IsReallyRunning", true); 
         }
-        else if(moveInput < -0.01f)
+    }
+    else
+    {
+        currentSpeed = walkSpeed;
+        
+        if (anim != null)
         {
-            visual.localScale = new Vector3(-4, 4, 4);
+            // Desativa o parâmetro de Corrida
+            anim.SetBool("IsReallyRunning", false);
         }
+    }
 
-        // Jump
-        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
-        {
-            anim.SetTrigger("Jump");
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        }
+    // --- 2. Aplica o Movimento ---
+    rb.linearVelocity = new Vector2(moveInput * currentSpeed, rb.linearVelocity.y);
 
-        anim.SetBool("isFightPose", Input.GetKey(KeyCode.LeftShift) && isGrounded);
-        if (Input.GetKey(KeyCode.LeftShift) && isGrounded)
+    // --- 3. Animações de Caminhada/Idle (Verifica se NÃO está Correndo) ---
+    if (anim != null)
+    {
+        // O isrunning (Caminhada) SÓ deve ser TRUE se o personagem estiver se movendo
+        // E NÃO estiver atualmente ativando a animação de corrida (IsReallyRunning é FALSE)
+        bool isWalking = Mathf.Abs(moveInput) > 0f && isGrounded && !currentlyRunning;
+        
+        // Se isReallyRunning for True, isrunning será False, e a transição do Animator cuidará do resto.
+        anim.SetBool("isrunning", isWalking); 
+        
+        anim.SetBool("isjumping", Mathf.Abs(rb.linearVelocity.y) > 0.01f && !isGrounded);
+    }
+    
+    // ... (restante do código: Flip, Pulo)
+}
+    // --- Lógica de Vitória ---
+
+    public void AchieveVictory()
+    {
+        isVictorious = true;
+        this.enabled = false;
+
+        if (anim != null)
         {
-            rb.linearVelocity = Vector3.zero;
-            if (Input.GetKeyDown(KeyCode.Z) && isGrounded)
-            {
-                anim.SetTrigger("Punch");
-            }
+            anim.SetTrigger("Victory");
         }
+        Debug.Log("Vitória alcançada!");
     }
 }

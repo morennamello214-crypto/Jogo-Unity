@@ -13,7 +13,7 @@ public class EnemyWaypointMovement : MonoBehaviour
     [Header("Combat Settings")]
     public float damage = 10f;
     public float attackCooldown = 1f;
-    public float knockbackForce = 15f;
+    public float knockbackForce = 50f;
     
     private Rigidbody2D rb;
     private int currentWaypointIndex = 0;
